@@ -14,4 +14,14 @@ public class Login {
         this.firstName = firstName;
         this.lastName = lastName;
     }
+
+    public boolean checkUserName() {
+        if (this.username == null) return false;
+        return this.username.contains("_") && this.username.length() <= 5;
+    }
+
+    public boolean checkUserName(String username) {
+        if (username == null) return false;
+        return username.contains("_") && username.length() <= 5;
+    }
 }
