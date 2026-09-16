@@ -5,7 +5,13 @@ public class Login {
     private String firstName;
     private String lastName;
 
-    public Login() {}
+    public Login() {
+        this.username = "";
+        this.password = "";
+        this.cellPhoneNumber = "";
+        this.firstName = "";
+        this.lastName = "";
+    }
 
     public Login(String username, String password, String cellPhoneNumber, String firstName, String lastName) {
         this.username = username;
@@ -16,12 +22,22 @@ public class Login {
     }
 
     public boolean checkUserName() {
-        if (this.username == null) return false;
-        return this.username.contains("_") && this.username.length() <= 5;
+        return checkUserName(this.username);
     }
 
     public boolean checkUserName(String username) {
         if (username == null) return false;
         return username.contains("_") && username.length() <= 5;
     }
+
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+    public String getCellPhoneNumber() { return cellPhoneNumber; }
+    public void setCellPhoneNumber(String cellPhoneNumber) { this.cellPhoneNumber = cellPhoneNumber; }
+    public String getFirstName() { return firstName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public String getLastName() { return lastName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
 }
