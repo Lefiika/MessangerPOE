@@ -45,12 +45,6 @@ public class Login {
         return hasCapital && hasNumber && hasSpecial;
     }
 
-    /*
-     * Reference for Regular Expression Cell Phone Checker:
-     * Standard international telephone numbering plan (ITU-T E.164).
-     * Regex "^\\+27\\d{9}$" verifies the international country code (+27) 
-     * followed by 9 numerical digits.
-     */
     public boolean checkCellPhoneNumber() {
         return checkCellPhoneNumber(this.cellPhoneNumber);
     }
@@ -59,6 +53,19 @@ public class Login {
         if (cellPhoneNumber == null) return false;
         String regex = "^\\+27\\d{9}$";
         return cellPhoneNumber.matches(regex);
+    }
+
+    public String registerUser() {
+        if (!checkUserName(this.username)) {
+            return "Username is not correctly formatted; please ensure that your username contains an underscore and is no more than five characters in length.";
+        }
+        if (!checkPasswordComplexity(this.password)) {
+            return "Password is not correctly formatted; please ensure that the password contains at least eight characters, a capital letter, a number, and a special character.";
+        }
+        if (!checkCellPhoneNumber(this.cellPhoneNumber)) {
+            return "Cell phone number incorrectly formatted or does not contain international code.";
+        }
+        return "The two above conditions have been met, and the user has been registered successfully.";
     }
 
     public String getUsername() { return username; }
