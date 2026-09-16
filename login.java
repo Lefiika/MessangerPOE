@@ -68,6 +68,21 @@ public class Login {
         return "The two above conditions have been met, and the user has been registered successfully.";
     }
 
+    public boolean loginUser(String enteredUsername, String enteredPassword) {
+        if (this.username == null || this.password == null) {
+            return false;
+        }
+        return this.username.equals(enteredUsername) && this.password.equals(enteredPassword);
+    }
+
+    public String returnLoginStatus(boolean isLoggedIn) {
+        if (isLoggedIn) {
+            return "Welcome " + firstName + ", " + lastName + " it is great to see you.";
+        } else {
+            return "Username or password incorrect, please try again.";
+        }
+    }
+
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
     public String getPassword() { return password; }
