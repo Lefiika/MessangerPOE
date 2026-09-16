@@ -30,6 +30,21 @@ public class Login {
         return username.contains("_") && username.length() <= 5;
     }
 
+    public boolean checkPasswordComplexity() {
+        return checkPasswordComplexity(this.password);
+    }
+
+    public boolean checkPasswordComplexity(String password) {
+        if (password == null || password.length() < 8) {
+            return false;
+        }
+        boolean hasCapital = !password.equals(password.toLowerCase());
+        boolean hasNumber = password.matches(".*\\d.*");
+        boolean hasSpecial = password.matches(".*[^a-zA-Z0-9].*");
+
+        return hasCapital && hasNumber && hasSpecial;
+    }
+
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
     public String getPassword() { return password; }
