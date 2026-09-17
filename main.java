@@ -23,7 +23,7 @@ public class Main {
         String regStatus = userAccount.registerUser();
         System.out.println(regStatus);
 
-        if (regStatus.contains("registered successfully")) {
+        if (regStatus.contains("successfully captured")) {
             System.out.print("\nEnter Username to Login: ");
             String loginUser = scanner.nextLine();
 
