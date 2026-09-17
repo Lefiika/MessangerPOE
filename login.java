@@ -1,3 +1,4 @@
+
 public class Login {
     private String username;
     private String password;
@@ -21,6 +22,7 @@ public class Login {
         this.lastName = lastName;
     }
 
+    // Username must contain an underscore and be no more than 5 characters long.
     public boolean checkUserName() {
         return checkUserName(this.username);
     }
@@ -30,6 +32,7 @@ public class Login {
         return username.contains("_") && username.length() <= 5;
     }
 
+    // Password must be at least 8 characters, with a capital letter, a number, and a special character.
     public boolean checkPasswordComplexity() {
         return checkPasswordComplexity(this.password);
     }
@@ -41,9 +44,15 @@ public class Login {
         boolean hasCapital = !password.equals(password.toLowerCase());
         boolean hasNumber = password.matches(".*\\d.*");
         boolean hasSpecial = password.matches(".*[^a-zA-Z0-9].*");
-
         return hasCapital && hasNumber && hasSpecial;
     }
+
+
+    // Reference: regular expression syntax researched from the official
+    // Java Pattern class documentation and the "^\\+" anchor/escaping
+    // approach for matching a leading international dialling code.
+    // Oracle. (n.d.). Class Pattern. Java Platform SE Documentation.
+    // https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html
 
     public boolean checkCellPhoneNumber() {
         return checkCellPhoneNumber(this.cellPhoneNumber);
@@ -51,10 +60,13 @@ public class Login {
 
     public boolean checkCellPhoneNumber(String cellPhoneNumber) {
         if (cellPhoneNumber == null) return false;
+        String sanitizedNumber = cellPhoneNumber.replaceAll("[\\s-]", "");
         String regex = "^\\+27\\d{9}$";
-        return cellPhoneNumber.matches(regex);
+        return sanitizedNumber.matches(regex);
     }
+    
 
+    // Returns a message indicating the result of the registration attempt, based on the validation of the username, password, and cell phone number.
     public String registerUser() {
         if (!checkUserName(this.username)) {
             return "Username is not correctly formatted; please ensure that your username contains an underscore and is no more than five characters in length.";
@@ -63,9 +75,9 @@ public class Login {
             return "Password is not correctly formatted; please ensure that the password contains at least eight characters, a capital letter, a number, and a special character.";
         }
         if (!checkCellPhoneNumber(this.cellPhoneNumber)) {
-            return "Cell phone number incorrectly formatted or does not contain international code.";
+            return "Cell number is incorrectly formatted or does not contain an international code; please correct the number and try again.";
         }
-        return "The two above conditions have been met, and the user has been registered successfully.";
+        return "Username, password, and cell phone number successfully captured.";
     }
 
     public boolean loginUser(String enteredUsername, String enteredPassword) {
