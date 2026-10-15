@@ -20,7 +20,7 @@ public class Message {
         this.messageID = generateMessageID();
     }
 
-    // Makes a random ten-digit ID
+    // Makes a random ten-digit ID (leading zeros are kept, e.g. 0012345678).
     private String generateMessageID() {
         long number = (long) (new Random().nextDouble() * 10000000000L);
         return String.format("%010d", number);
@@ -31,12 +31,32 @@ public class Message {
         return messageID.length() <= 10;
     }
 
+    // Reuses the cell number check from Login Class
     public String checkRecipientCell() {
         Login login = new Login();
         if (login.checkCellPhoneNumber(recipient)) {
             return "Cell phone number successfully captured.";
         }
         return "Cell phone number is incorrectly formatted or does not contain an international code. Please correct the number and try again.";
+    }
+
+    // The message must not be more than 250 characters.
+    public String checkMessageLength() {
+        int length = messageText.length();
+        if (length <= 250) {
+            return "Message ready to send.";
+        }
+        return "Message exceeds 250 characters by " + (length - 250) + "; please reduce the size.";
+    }
+
+    // Hash format: first two digits of ID : message number : FIRSTWORDLASTWORD (all caps)
+    public String createMessageHash() {
+        String[] words = messageText.trim().split("\\s+");
+        // Remove punctuation so "tonight?" becomes "tonight"
+        String firstWord = words[0].replaceAll("[^a-zA-Z0-9]", "");
+        String lastWord = words[words.length - 1].replaceAll("[^a-zA-Z0-9]", "");
+        String firstTwo = messageID.substring(0, 2);
+        return (firstTwo + ":" + messageNumber + ":" + firstWord + lastWord).toUpperCase();
     }
 
     // Total number of messages sent so far.
@@ -50,7 +70,7 @@ public class Message {
     }
 
     public String getMessageID() { return messageID; }
-    
+    // Lets unit tests set a known ID.
     public void setMessageID(String messageID) { this.messageID = messageID; }
     public int getMessageNumber() { return messageNumber; }
     public String getRecipient() { return recipient; }
