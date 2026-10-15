@@ -3,7 +3,6 @@ package messangerpoe;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-
 public class MessageTest {
 
     // Test Case 1 data
@@ -14,6 +13,7 @@ public class MessageTest {
     private static final String RECIPIENT_2 = "08575975889";
     private static final String MESSAGE_2 = "Hi Keegan, did you receive the payment?";
 
+    // Recipient number (reuses the  cell number logic)
 
     @Test
     public void testRecipientCell_Success() {
@@ -43,7 +43,7 @@ public class MessageTest {
         assertEquals("Message exceeds 250 characters by 5; please reduce the size.", m.checkMessageLength());
     }
 
-    //  Message hash
+    //  Message hash 
 
     @Test
     public void testMessageHash_TestCase1() {
@@ -57,6 +57,57 @@ public class MessageTest {
         Message m = new Message(1, RECIPIENT_2, MESSAGE_2);
         m.setMessageID("9912345678");
         assertEquals("99:1:HIPAYMENT", m.createMessageHash());
+    }
+
+    //  Send / disregard / store 
+
+    @Test
+    public void testSentMessage_Send() {
+        Message m = new Message(0, RECIPIENT_1, MESSAGE_1);
+        assertEquals("Message successfully sent.", m.sentMessage(1));
+    }
+
+    @Test
+    public void testSentMessage_Disregard() {
+        Message m = new Message(1, RECIPIENT_2, MESSAGE_2);
+        assertEquals("Press 0 to delete the message.", m.sentMessage(2));
+    }
+
+    @Test
+    public void testSentMessage_Store() {
+        Message m = new Message(1, RECIPIENT_2, MESSAGE_2);
+        assertEquals("Message successfully stored.", m.sentMessage(3));
+    }
+
+    //  Total messages and printing 
+
+    @Test
+    public void testTotalMessagesIncreasesWhenSent() {
+        int before = Message.returnTotalMessages();
+        new Message(0, RECIPIENT_1, MESSAGE_1).sentMessage(1);
+        assertEquals(before + 1, Message.returnTotalMessages());
+    }
+
+    @Test
+    public void testDisregardedMessageIsNotCounted() {
+        int before = Message.returnTotalMessages();
+        new Message(1, RECIPIENT_2, MESSAGE_2).sentMessage(2);
+        assertEquals(before, Message.returnTotalMessages());
+    }
+
+    @Test
+    public void testPrintMessageDetails_Order() {
+        Message m = new Message(0, RECIPIENT_1, MESSAGE_1);
+        m.setMessageID("0012345678");
+        assertEquals("Message ID: 0012345678\nMessage Hash: 00:0:HITONIGHT\nRecipient: +27718693002\nMessage: " + MESSAGE_1,
+                m.printMessageDetails());
+    }
+
+    @Test
+    public void testPrintMessagesContainsSentMessage() {
+        Message m = new Message(0, RECIPIENT_1, MESSAGE_1);
+        m.sentMessage(1);
+        assertTrue(Message.printMessages().contains(m.getMessageID()));
     }
 
     //  Message ID 
