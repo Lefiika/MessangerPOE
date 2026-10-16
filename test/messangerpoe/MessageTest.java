@@ -1,8 +1,11 @@
 package messangerpoe;
 
+import java.io.File;
+import java.nio.file.Files;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+// Unit tests for the Message class , using the task's Test Case 1 and 2 data.
 public class MessageTest {
 
     // Test Case 1 data
@@ -13,7 +16,7 @@ public class MessageTest {
     private static final String RECIPIENT_2 = "08575975889";
     private static final String MESSAGE_2 = "Hi Keegan, did you receive the payment?";
 
-    // Recipient number (reuses the  cell number logic)
+    // Recipient number (reuses the cell number logic)
 
     @Test
     public void testRecipientCell_Success() {
@@ -28,7 +31,7 @@ public class MessageTest {
                 m.checkRecipientCell());
     }
 
-    //  Message length (250 characters)
+    // Message length (250 characters)
 
     @Test
     public void testMessageLength_Success() {
@@ -38,12 +41,13 @@ public class MessageTest {
 
     @Test
     public void testMessageLength_Failure() {
+        // 255 characters, so it is 5 over the limit
         String longText = "a".repeat(255);
         Message m = new Message(0, RECIPIENT_1, longText);
         assertEquals("Message exceeds 250 characters by 5; please reduce the size.", m.checkMessageLength());
     }
 
-    //  Message hash 
+    // Message hash
 
     @Test
     public void testMessageHash_TestCase1() {
@@ -59,7 +63,7 @@ public class MessageTest {
         assertEquals("99:1:HIPAYMENT", m.createMessageHash());
     }
 
-    //  Send / disregard / store 
+    // Send / disregard / store
 
     @Test
     public void testSentMessage_Send() {
@@ -79,7 +83,37 @@ public class MessageTest {
         assertEquals("Message successfully stored.", m.sentMessage(3));
     }
 
-    //  Total messages and printing 
+    // Storing messages as JSON
+
+    @Test
+    public void testStoreMessage_WritesJsonFile() throws Exception {
+        File file = File.createTempFile("messages_test", ".json");
+        Message m = new Message(0, RECIPIENT_1, MESSAGE_1);
+        m.setMessageID("0012345678");
+
+        assertTrue(m.storeMessage(file.getPath()));
+
+        String json = new String(Files.readAllBytes(file.toPath()));
+        assertTrue(json.contains("\"messageID\": \"0012345678\""));
+        assertTrue(json.contains("\"messageHash\": \"00:0:HITONIGHT\""));
+        assertTrue(json.contains("\"recipient\": \"+27718693002\""));
+        assertTrue(json.contains("\"message\": \"Hi Mike, can you join us for dinner tonight?\""));
+        file.delete();
+    }
+
+    @Test
+    public void testStoreMessage_EscapesQuotes() throws Exception {
+        File file = File.createTempFile("messages_test", ".json");
+        Message m = new Message(0, RECIPIENT_1, "He said \"hi\" today");
+
+        m.storeMessage(file.getPath());
+
+        String json = new String(Files.readAllBytes(file.toPath()));
+        assertTrue(json.contains("He said \\\"hi\\\" today"));
+        file.delete();
+    }
+
+    // Total messages and printing 
 
     @Test
     public void testTotalMessagesIncreasesWhenSent() {
@@ -110,7 +144,7 @@ public class MessageTest {
         assertTrue(Message.printMessages().contains(m.getMessageID()));
     }
 
-    //  Message ID 
+    // Message ID
 
     @Test
     public void testMessageIDIsCreatedAndIsTenCharacters() {
