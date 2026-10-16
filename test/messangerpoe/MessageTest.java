@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-// Unit tests for the Message class , using the task's Test Case 1 and 2 data.
+// Unit tests for the Message class, using the task's Test Case 1 and 2 data.
 public class MessageTest {
 
     // Test Case 1 data
@@ -16,7 +16,7 @@ public class MessageTest {
     private static final String RECIPIENT_2 = "08575975889";
     private static final String MESSAGE_2 = "Hi Keegan, did you receive the payment?";
 
-    // Recipient number (reuses the cell number logic)
+    //  Recipient number (reuses the cell number logic) 
 
     @Test
     public void testRecipientCell_Success() {
@@ -113,7 +113,7 @@ public class MessageTest {
         file.delete();
     }
 
-    // Total messages and printing 
+    // Total messages and printing
 
     @Test
     public void testTotalMessagesIncreasesWhenSent() {
@@ -144,7 +144,60 @@ public class MessageTest {
         assertTrue(Message.printMessages().contains(m.getMessageID()));
     }
 
-    // Message ID
+    // Looped tests
+
+    // Checks several message hashes in a loop (message number is the loop counter)
+    @Test
+    public void testMessageHashes_InALoop() {
+        String[] ids = {"0012345678", "0012345678", "1299999999", "5500000000"};
+        String[] texts = {
+            "Hi Mike, can you join us for dinner tonight?",
+            "Hi Keegan, did you receive the payment?",
+            "Hello",
+            "  Call me   when you get this!  "
+        };
+        String[] expected = {
+            "00:0:HITONIGHT",
+            "00:1:HIPAYMENT",
+            "12:2:HELLOHELLO",
+            "55:3:CALLTHIS"
+        };
+
+        for (int i = 0; i < texts.length; i++) {
+            Message m = new Message(i, RECIPIENT_1, texts[i]);
+            m.setMessageID(ids[i]);
+            assertEquals(expected[i], m.createMessageHash());
+        }
+    }
+
+    // Every message created in a loop must get a valid ten-digit ID
+    @Test
+    public void testMessageIDs_InALoop() {
+        for (int i = 0; i < 20; i++) {
+            Message m = new Message(i, RECIPIENT_1, MESSAGE_1);
+            assertTrue(m.checkMessageID());
+            assertEquals("Message ID generated: " + m.getMessageID(), m.getMessageIDStatus());
+            assertEquals(10, m.getMessageID().length());
+        }
+    }
+
+    //  Test Case 1 and 2 together: send the first, disregard the second 
+
+    @Test
+    public void testBothTestCases_TotalSent() {
+        int before = Message.returnTotalMessages();
+
+        Message first = new Message(0, RECIPIENT_1, MESSAGE_1);
+        assertEquals("Message successfully sent.", first.sentMessage(1));
+
+        Message second = new Message(1, RECIPIENT_2, MESSAGE_2);
+        assertEquals("Press 0 to delete the message.", second.sentMessage(2));
+
+        // Only the first message was sent
+        assertEquals(before + 1, Message.returnTotalMessages());
+    }
+
+    // Message ID 
 
     @Test
     public void testMessageIDIsCreatedAndIsTenCharacters() {
