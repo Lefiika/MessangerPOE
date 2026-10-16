@@ -40,7 +40,12 @@ public class Message {
         return messageID.length() <= 10;
     }
 
-    // Reuses the cell number check from Login class.
+    // Tells the user which ID was created for the message.
+    public String getMessageIDStatus() {
+        return "Message ID generated: " + messageID;
+    }
+
+    // Reuses the cell number check from Part 1 (Login class).
     public String checkRecipientCell() {
         Login login = new Login();
         if (login.checkCellPhoneNumber(recipient)) {
@@ -108,7 +113,6 @@ public class Message {
     // https://www.rfc-editor.org/rfc/rfc8259
     // Writing a file with FileWriter: Oracle. (n.d.). FileWriter (Java Platform SE 8).
     // https://docs.oracle.com/javase/8/docs/api/java/io/FileWriter.html
-    
     public boolean storeMessage(String fileName) {
         storedMessages.add(this);
 

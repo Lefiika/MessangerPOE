@@ -153,6 +153,8 @@ public class Main {
                 validLength = result.equals("Message ready to send.");
             }
 
+            System.out.println(message.getMessageIDStatus());
+
             // Send, disregard or store
             int choice = 0;
             while (choice < 1 || choice > 3) {
