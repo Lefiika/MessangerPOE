@@ -58,6 +58,12 @@ public class Main {
                     if (matchedAccount != null) {
                         boolean loginSuccess = matchedAccount.loginUser(loginUser, loginPass);
                         System.out.println(matchedAccount.returnLoginStatus(loginSuccess));
+
+                        // Part 2: only logged in users can use QuickChat
+                        if (loginSuccess) {
+                            quickChatMenu(scanner);
+                            running = false;   // the user chose Quit, so the program ends
+                        }
                     } else {
                         // No stored account has this username, so it's a failed login.
                         System.out.println(new Login().returnLoginStatus(false));
@@ -73,5 +79,32 @@ public class Main {
         }
 
         scanner.close();
+    }
+
+    // Part 2: welcome message and numeric menu. Runs until the user chooses Quit.
+    public static void quickChatMenu(Scanner scanner) {
+        System.out.println("Welcome to QuickChat.");
+
+        boolean chatting = true;
+        while (chatting) {
+            System.out.println("\n1) Send Messages\n2) Show recently sent messages\n3) Quit");
+            System.out.print("Choose an option: ");
+            String option = scanner.nextLine();
+
+            switch (option) {
+                case "1":
+                    // Sending messages is added in the next step.
+                    System.out.println("Send Messages is not ready yet.");
+                    break;
+                case "2":
+                    System.out.println("Coming Soon.");
+                    break;
+                case "3":
+                    chatting = false;
+                    break;
+                default:
+                    System.out.println("Invalid option, please enter 1, 2 or 3.");
+            }
+        }
     }
 }
