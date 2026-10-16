@@ -1,5 +1,7 @@
 package messangerpoe;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -11,6 +13,9 @@ public class Message {
 
     // Every message sent while the program is running.
     private static ArrayList<Message> sentMessages = new ArrayList<>();
+
+    // Messages the user chose to store for later (these are written to the JSON file).
+    private static ArrayList<Message> storedMessages = new ArrayList<>();
 
     private String messageID;     // random ten-digit number
     private int messageNumber;    // the loop counter for this message
@@ -35,7 +40,7 @@ public class Message {
         return messageID.length() <= 10;
     }
 
-    // Reuses the cell number check from Login class
+    // Reuses the cell number check from Login class.
     public String checkRecipientCell() {
         Login login = new Login();
         if (login.checkCellPhoneNumber(recipient)) {
@@ -73,6 +78,7 @@ public class Message {
         } else if (choice == 2) {
             return "Press 0 to delete the message.";
         } else if (choice == 3) {
+            storeMessage("messages.json");
             return "Message successfully stored.";
         }
         return "Invalid option.";
@@ -93,6 +99,47 @@ public class Message {
             all = all + m.printMessageDetails() + "\n\n";
         }
         return all;
+    }
+
+    // Adds this message to the stored list and saves every stored message to a JSON file.
+    // Returns true if the file was written.
+    // Reference: JSON format (arrays, objects and string escaping) follows RFC 8259:
+    // Bray, T. (2017). The JavaScript Object Notation (JSON) Data Interchange Format.
+    // https://www.rfc-editor.org/rfc/rfc8259
+    // Writing a file with FileWriter: Oracle. (n.d.). FileWriter (Java Platform SE 8).
+    // https://docs.oracle.com/javase/8/docs/api/java/io/FileWriter.html
+    
+    public boolean storeMessage(String fileName) {
+        storedMessages.add(this);
+
+        String json = "[\n";
+        for (int i = 0; i < storedMessages.size(); i++) {
+            Message m = storedMessages.get(i);
+            json = json + "  {\n"
+                    + "    \"messageID\": \"" + escapeJson(m.messageID) + "\",\n"
+                    + "    \"messageHash\": \"" + escapeJson(m.createMessageHash()) + "\",\n"
+                    + "    \"recipient\": \"" + escapeJson(m.recipient) + "\",\n"
+                    + "    \"message\": \"" + escapeJson(m.messageText) + "\"\n"
+                    + "  }";
+            if (i < storedMessages.size() - 1) {
+                json = json + ",";
+            }
+            json = json + "\n";
+        }
+        json = json + "]\n";
+
+        try (FileWriter writer = new FileWriter(fileName)) {
+            writer.write(json);
+            return true;
+        } catch (IOException e) {
+            System.out.println("Could not save the message: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Makes text safe to put inside a JSON string (backslashes, quotes, new lines).
+    private String escapeJson(String text) {
+        return text.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n");
     }
 
     // Total number of messages sent so far.
