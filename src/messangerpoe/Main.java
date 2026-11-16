@@ -8,6 +8,9 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         ArrayList<Login> registeredAccounts = new ArrayList<>();
 
+        // Part 3: load the stored messages from the JSON file when the program starts
+        Message.loadStoredMessages("messages.json");
+
         boolean running = true;
         while (running) {
             System.out.println("\n1. Register\n2. Login\n3. Exit");
