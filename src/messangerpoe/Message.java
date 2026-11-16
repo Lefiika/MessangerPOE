@@ -233,6 +233,18 @@ public class Message {
         return result;
     }
 
+    // Lists the sender and recipient of every stored message.
+    public static String displaySenderAndRecipient(String sender) {
+        if (storedMessages.isEmpty()) {
+            return "There are no stored messages.";
+        }
+        String all = "";
+        for (Message m : storedMessages) {
+            all = all + "Sender: " + sender + "\nRecipient: " + m.recipient + "\n\n";
+        }
+        return all;
+    }
+
     // Total number of messages sent so far.
     public static int returnTotalMessages() {
         return totalMessagesSent;

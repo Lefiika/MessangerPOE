@@ -64,7 +64,7 @@ public class Main {
 
                         // Part 2: only logged in users can use QuickChat
                         if (loginSuccess) {
-                            quickChatMenu(scanner);
+                            quickChatMenu(scanner, matchedAccount);
                             running = false;   // the user chose Quit, so the program ends
                         }
                     } else {
@@ -85,7 +85,7 @@ public class Main {
     }
 
     // Part 2: welcome message and numeric menu. Runs until the user chooses Quit.
-    public static void quickChatMenu(Scanner scanner) {
+    public static void quickChatMenu(Scanner scanner, Login user) {
         System.out.println("Welcome to QuickChat.");
 
         boolean chatting = true;
@@ -105,7 +105,7 @@ public class Main {
                     chatting = false;
                     break;
                 case "4":
-                    storedMessagesMenu(scanner);
+                    storedMessagesMenu(scanner, user);
                     break;
                 default:
                     System.out.println("Invalid option, please enter 1, 2, 3 or 4.");
@@ -114,7 +114,9 @@ public class Main {
     }
 
     // Part 3: the Stored Messages menu. Runs until the user chooses Back.
-    public static void storedMessagesMenu(Scanner scanner) {
+    public static void storedMessagesMenu(Scanner scanner, Login user) {
+        String sender = user.getFirstName() + " " + user.getLastName() + " (" + user.getCellPhoneNumber() + ")";
+
         boolean viewing = true;
         while (viewing) {
             System.out.println("\n--- Stored Messages ---");
@@ -130,6 +132,8 @@ public class Main {
 
             switch (option) {
                 case "1":
+                    System.out.println(Message.displaySenderAndRecipient(sender));
+                    break;
                 case "2":
                 case "3":
                 case "4":
