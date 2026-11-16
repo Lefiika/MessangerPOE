@@ -332,6 +332,18 @@ public class Message {
         return null;
     }
 
+    // Builds a report with the full details of every stored message.
+    public static String displayStoredReport() {
+        if (storedMessages.isEmpty()) {
+            return "There are no stored messages.";
+        }
+        String report = "--- Stored Messages Report ---\n\n";
+        for (Message m : storedMessages) {
+            report = report + m.printMessageDetails() + "\n\n";
+        }
+        return report;
+    }
+
     // Total number of messages sent so far.
     public static int returnTotalMessages() {
         return totalMessagesSent;

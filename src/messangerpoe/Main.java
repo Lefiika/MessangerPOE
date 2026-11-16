@@ -164,7 +164,7 @@ public class Main {
                     Message.writeStoredMessagesToFile("messages.json");
                     break;
                 case "6":
-                    System.out.println("Coming Soon.");
+                    System.out.println(Message.displayStoredReport());
                     break;
                 case "7":
                     viewing = false;
