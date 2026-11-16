@@ -90,7 +90,7 @@ public class Main {
 
         boolean chatting = true;
         while (chatting) {
-            System.out.println("\n1) Send Messages\n2) Show recently sent messages\n3) Quit");
+            System.out.println("\n1) Send Messages\n2) Show recently sent messages\n3) Quit\n4) Stored Messages");
             System.out.print("Choose an option: ");
             String option = scanner.nextLine();
 
@@ -104,8 +104,44 @@ public class Main {
                 case "3":
                     chatting = false;
                     break;
+                case "4":
+                    storedMessagesMenu(scanner);
+                    break;
                 default:
-                    System.out.println("Invalid option, please enter 1, 2 or 3.");
+                    System.out.println("Invalid option, please enter 1, 2, 3 or 4.");
+            }
+        }
+    }
+
+    // Part 3: the Stored Messages menu. Runs until the user chooses Back.
+    public static void storedMessagesMenu(Scanner scanner) {
+        boolean viewing = true;
+        while (viewing) {
+            System.out.println("\n--- Stored Messages ---");
+            System.out.println("1) Display sender and recipient of all stored messages");
+            System.out.println("2) Display the longest stored message");
+            System.out.println("3) Search for a message ID");
+            System.out.println("4) Search for stored messages by recipient");
+            System.out.println("5) Delete a message using its hash");
+            System.out.println("6) Display a report of all stored messages");
+            System.out.println("7) Back");
+            System.out.print("Choose an option: ");
+            String option = scanner.nextLine();
+
+            switch (option) {
+                case "1":
+                case "2":
+                case "3":
+                case "4":
+                case "5":
+                case "6":
+                    System.out.println("Coming Soon.");
+                    break;
+                case "7":
+                    viewing = false;
+                    break;
+                default:
+                    System.out.println("Invalid option, please enter a number from 1 to 7.");
             }
         }
     }
