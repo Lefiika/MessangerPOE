@@ -1,4 +1,4 @@
-# Runs all the unit tests (Login and Message) every time code is pushed to GitHub.
+# Runs all the unit tests (Login, Message and Stored Messages) every time code is pushed to GitHub.
 name: TestJava
 
 on:
