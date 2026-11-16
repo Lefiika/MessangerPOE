@@ -344,6 +344,44 @@ public class Message {
         return report;
     }
 
+    // Empties every array and the sent total so the test data can be loaded fresh.
+    public static void clearAll() {
+        sentMessages.clear();
+        disregardedMessages.clear();
+        storedMessages.clear();
+        messageHashes.clear();
+        messageIDs.clear();
+        totalMessagesSent = 0;
+    }
+
+    // Developer entry: fills the arrays with test data messages 1 to 5 from the task.
+    // Message 4 gets the developer's own message ID (0838884567) so it can be searched for.
+    public static void addTestData() {
+        clearAll();
+
+        Message message1 = new Message(0, "+27834557896", "Did you get the cake?");
+        message1.setMessageID("3459871203");
+        message1.sentMessage(1);
+
+        Message message2 = new Message(1, "+27838884567", "Where are you? You are late! I have asked you to be on time.");
+        message2.setMessageID("7712345098");
+        storedMessages.add(message2);
+        message2.addHashAndID();
+
+        Message message3 = new Message(2, "+27834484567", "Yohoooo, I am at your gate.");
+        message3.setMessageID("5589012345");
+        message3.sentMessage(2);
+
+        Message message4 = new Message(3, "Developer", "It is dinner time!");
+        message4.setMessageID("0838884567");
+        message4.sentMessage(1);
+
+        Message message5 = new Message(4, "+27838884567", "Ok, I am leaving without you.");
+        message5.setMessageID("9021345678");
+        storedMessages.add(message5);
+        message5.addHashAndID();
+    }
+
     // Total number of messages sent so far.
     public static int returnTotalMessages() {
         return totalMessagesSent;
