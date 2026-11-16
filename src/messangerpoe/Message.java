@@ -127,15 +127,19 @@ public class Message {
 
     // Adds this message to the stored list and saves every stored message to a JSON file.
     // Returns true if the file was written.
+    public boolean storeMessage(String fileName) {
+        storedMessages.add(this);
+        addHashAndID();
+        return writeStoredMessagesToFile(fileName);
+    }
+
+    // Saves every stored message to a JSON file. Returns true if the file was written.
     // Reference: JSON format (arrays, objects and string escaping) follows RFC 8259:
     // Bray, T. (2017). The JavaScript Object Notation (JSON) Data Interchange Format.
     // https://www.rfc-editor.org/rfc/rfc8259
     // Writing a file with FileWriter: Oracle. (n.d.). FileWriter (Java Platform SE 8).
     // https://docs.oracle.com/javase/8/docs/api/java/io/FileWriter.html
-    public boolean storeMessage(String fileName) {
-        storedMessages.add(this);
-        addHashAndID();
-
+    public static boolean writeStoredMessagesToFile(String fileName) {
         String json = "[\n";
         for (int i = 0; i < storedMessages.size(); i++) {
             Message m = storedMessages.get(i);
@@ -162,7 +166,7 @@ public class Message {
     }
 
     // Makes text safe to put inside a JSON string (backslashes, quotes, new lines).
-    private String escapeJson(String text) {
+    private static String escapeJson(String text) {
         return text.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n");
     }
 
@@ -273,6 +277,56 @@ public class Message {
                         return m;
                     }
                 }
+            }
+        }
+        return null;
+    }
+
+    // Returns the text of every sent or stored message for one recipient.
+    public static ArrayList<String> searchByRecipient(String recipient) {
+        ArrayList<String> found = new ArrayList<>();
+        for (Message m : sentMessages) {
+            if (m.recipient.equals(recipient)) {
+                found.add(m.messageText);
+            }
+        }
+        for (Message m : storedMessages) {
+            if (m.recipient.equals(recipient)) {
+                found.add(m.messageText);
+            }
+        }
+        return found;
+    }
+
+    // Deletes the message with this hash from the arrays. Returns a message to show the user.
+    public static String deleteMessageByHash(String hash) {
+        int index = messageHashes.indexOf(hash);
+        if (index == -1) {
+            return "Message hash not found.";
+        }
+
+        String id = messageIDs.get(index);
+        Message removed = removeById(storedMessages, id);
+        if (removed == null) {
+            removed = removeById(sentMessages, id);
+        }
+        if (removed == null) {
+            removed = removeById(disregardedMessages, id);
+        }
+        messageHashes.remove(index);
+        messageIDs.remove(index);
+
+        if (removed == null) {
+            return "Message hash not found.";
+        }
+        return "Message: \"" + removed.messageText + "\" successfully deleted.";
+    }
+
+    // Removes the message with this ID from a list. Returns the removed message, or null if it is not in the list.
+    private static Message removeById(ArrayList<Message> list, String id) {
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).messageID.equals(id)) {
+                return list.remove(i);
             }
         }
         return null;

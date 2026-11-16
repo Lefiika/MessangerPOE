@@ -123,7 +123,7 @@ public class Main {
             System.out.println("1) Display sender and recipient of all stored messages");
             System.out.println("2) Display the longest stored message");
             System.out.println("3) Search for a message ID");
-            System.out.println("4) Search for stored messages by recipient");
+            System.out.println("4) Search for messages by recipient");
             System.out.println("5) Delete a message using its hash");
             System.out.println("6) Display a report of all stored messages");
             System.out.println("7) Back");
@@ -148,7 +148,21 @@ public class Main {
                     }
                     break;
                 case "4":
+                    System.out.print("Enter the recipient cell number: ");
+                    ArrayList<String> results = Message.searchByRecipient(scanner.nextLine().trim());
+                    if (results.isEmpty()) {
+                        System.out.println("No messages found for this recipient.");
+                    } else {
+                        for (String text : results) {
+                            System.out.println("Message: " + text);
+                        }
+                    }
+                    break;
                 case "5":
+                    System.out.print("Enter the message hash: ");
+                    System.out.println(Message.deleteMessageByHash(scanner.nextLine().trim()));
+                    Message.writeStoredMessagesToFile("messages.json");
+                    break;
                 case "6":
                     System.out.println("Coming Soon.");
                     break;
