@@ -259,6 +259,25 @@ public class Message {
         return longest.messageText;
     }
 
+    // Searches the sent and stored messages for a message ID. Returns null if it is not found.
+    public static Message findMessageByID(String id) {
+        for (int i = 0; i < messageIDs.size(); i++) {
+            if (messageIDs.get(i).equals(id)) {
+                for (Message m : sentMessages) {
+                    if (m.messageID.equals(id)) {
+                        return m;
+                    }
+                }
+                for (Message m : storedMessages) {
+                    if (m.messageID.equals(id)) {
+                        return m;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     // Total number of messages sent so far.
     public static int returnTotalMessages() {
         return totalMessagesSent;

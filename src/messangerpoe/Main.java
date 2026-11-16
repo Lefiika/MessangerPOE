@@ -138,6 +138,15 @@ public class Main {
                     System.out.println("Longest stored message: " + Message.getLongestStoredMessage());
                     break;
                 case "3":
+                    System.out.print("Enter the message ID: ");
+                    Message found = Message.findMessageByID(scanner.nextLine().trim());
+                    if (found == null) {
+                        System.out.println("Message ID not found.");
+                    } else {
+                        System.out.println("Recipient: " + found.getRecipient());
+                        System.out.println("Message: " + found.getMessageText());
+                    }
+                    break;
                 case "4":
                 case "5":
                 case "6":
