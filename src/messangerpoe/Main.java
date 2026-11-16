@@ -135,6 +135,8 @@ public class Main {
                     System.out.println(Message.displaySenderAndRecipient(sender));
                     break;
                 case "2":
+                    System.out.println("Longest stored message: " + Message.getLongestStoredMessage());
+                    break;
                 case "3":
                 case "4":
                 case "5":

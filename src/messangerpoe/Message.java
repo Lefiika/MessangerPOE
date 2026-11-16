@@ -245,6 +245,20 @@ public class Message {
         return all;
     }
 
+    // Returns the text of the longest stored message.
+    public static String getLongestStoredMessage() {
+        if (storedMessages.isEmpty()) {
+            return "There are no stored messages.";
+        }
+        Message longest = storedMessages.get(0);
+        for (Message m : storedMessages) {
+            if (m.messageText.length() > longest.messageText.length()) {
+                longest = m;
+            }
+        }
+        return longest.messageText;
+    }
+
     // Total number of messages sent so far.
     public static int returnTotalMessages() {
         return totalMessagesSent;
