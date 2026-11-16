@@ -1,5 +1,8 @@
 package messangerpoe;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,6 +19,13 @@ public class Message {
 
     // Messages the user chose to store for later (these are written to the JSON file).
     private static ArrayList<Message> storedMessages = new ArrayList<>();
+
+    // Messages the user chose to disregard.
+    private static ArrayList<Message> disregardedMessages = new ArrayList<>();
+
+    // The hash and ID of every message. Index 0 of one array matches index 0 of the other.
+    private static ArrayList<String> messageHashes = new ArrayList<>();
+    private static ArrayList<String> messageIDs = new ArrayList<>();
 
     private String messageID;     // random ten-digit number
     private int messageNumber;    // the loop counter for this message
@@ -78,15 +88,24 @@ public class Message {
     public String sentMessage(int choice) {
         if (choice == 1) {
             sentMessages.add(this);
+            addHashAndID();
             addToTotal();
             return "Message successfully sent.";
         } else if (choice == 2) {
+            disregardedMessages.add(this);
+            addHashAndID();
             return "Press 0 to delete the message.";
         } else if (choice == 3) {
             storeMessage("messages.json");
             return "Message successfully stored.";
         }
         return "Invalid option.";
+    }
+
+    // Adds this message's hash and ID to the two parallel arrays.
+    private void addHashAndID() {
+        messageHashes.add(createMessageHash());
+        messageIDs.add(messageID);
     }
 
     // The details of this message in the required order: ID, Hash, Recipient, Message.
@@ -115,6 +134,7 @@ public class Message {
     // https://docs.oracle.com/javase/8/docs/api/java/io/FileWriter.html
     public boolean storeMessage(String fileName) {
         storedMessages.add(this);
+        addHashAndID();
 
         String json = "[\n";
         for (int i = 0; i < storedMessages.size(); i++) {
@@ -146,6 +166,73 @@ public class Message {
         return text.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n");
     }
 
+    // Reads the JSON file into the stored messages array. Returns how many messages were loaded.
+    // Reference: reading a text file line by line with BufferedReader and FileReader:
+    // Oracle. (n.d.). BufferedReader (Java Platform SE 8).
+    // https://docs.oracle.com/javase/8/docs/api/java/io/BufferedReader.html
+    public static int loadStoredMessages(String fileName) {
+        File file = new File(fileName);
+        if (!file.exists()) {
+            return 0;
+        }
+
+        int loaded = 0;
+        String id = "";
+        String hash = "";
+        String recipient = "";
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (line.startsWith("\"messageID\"")) {
+                    id = readJsonValue(line);
+                } else if (line.startsWith("\"messageHash\"")) {
+                    hash = readJsonValue(line);
+                } else if (line.startsWith("\"recipient\"")) {
+                    recipient = readJsonValue(line);
+                } else if (line.startsWith("\"message\"")) {
+                    String text = readJsonValue(line);
+                    // The message number is the middle part of the hash, e.g. 00:0:HITONIGHT
+                    int number = Integer.parseInt(hash.split(":")[1]);
+                    Message m = new Message(number, recipient, text);
+                    m.setMessageID(id);
+                    storedMessages.add(m);
+                    m.addHashAndID();
+                    loaded++;
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Could not read the stored messages: " + e.getMessage());
+        }
+        return loaded;
+    }
+
+    // Gets the text inside the quotes after the colon and turns escaped characters back to normal.
+    private static String readJsonValue(String line) {
+        if (line.endsWith(",")) {
+            line = line.substring(0, line.length() - 1);
+        }
+        String value = line.substring(line.indexOf(": \"") + 3, line.length() - 1);
+
+        String result = "";
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            if (c == '\\' && i + 1 < value.length()) {
+                i++;
+                char next = value.charAt(i);
+                if (next == 'n') {
+                    result = result + "\n";
+                } else {
+                    result = result + next;
+                }
+            } else {
+                result = result + c;
+            }
+        }
+        return result;
+    }
+
     // Total number of messages sent so far.
     public static int returnTotalMessages() {
         return totalMessagesSent;
@@ -156,6 +243,11 @@ public class Message {
         totalMessagesSent++;
     }
 
+    public static ArrayList<Message> getSentMessages() { return sentMessages; }
+    public static ArrayList<Message> getDisregardedMessages() { return disregardedMessages; }
+    public static ArrayList<Message> getStoredMessages() { return storedMessages; }
+    public static ArrayList<String> getMessageHashes() { return messageHashes; }
+    public static ArrayList<String> getMessageIDs() { return messageIDs; }
     public String getMessageID() { return messageID; }
     // Lets unit tests set a known ID.
     public void setMessageID(String messageID) { this.messageID = messageID; }
